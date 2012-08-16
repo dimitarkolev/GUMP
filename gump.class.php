@@ -136,8 +136,13 @@ class GUMP
 
 				if(is_callable(array($this, $method)))
 				{
-					$result = $this->$method($field, $input, $param);					
-
+                                        if ($param === NULL) {
+                                            $result = $this->$method($field, $input);
+                                        }
+                                        else {
+                                            $result = $this->$method($field, $input, $param);
+                                        }
+                                        
 					if(is_array($result)) // Validation Failed
 					{
 						$errors[] = $result;
