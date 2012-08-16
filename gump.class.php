@@ -404,12 +404,13 @@ class GUMP
 	 */
 	protected function validate_date($field, $input, $param = 'DD-MM-YYYY')
 	{
-		if(!isset($input[$field]))
-		{
-			return;
-		}
-
-		if(strlen($date) >= 8 && strlen($date) <= 10){
+            if(!isset($input[$field]))
+            {
+                return;
+            }
+            $date = $input[$field];
+            $format = $param;
+            if(strlen($date) >= 8 && strlen($date) <= 10){
 	        $separator_only = str_replace(array('M','D','Y'),'', $format);
 	        $separator = $separator_only[0];
 	        if($separator){
@@ -427,14 +428,16 @@ class GUMP
 	                    if ($key[0] == 'M') $month = $value;
 	                    if ($key[0] == 'D') $day = $value;
 	                }
-	                if (checkdate($month,$day,$year)) return array(
-						'field' => $field,
-						'value' => $input[$field],
-						'rule'	=> __FUNCTION__
-					);
+	                if (checkdate($month,$day,$year)) return;
 	            }
 	        }
+
 	    }
+            return array(
+                'field' => $field,
+                'value' => $input[$field],
+                'rule'	=> __FUNCTION__
+            );
 	}
 	
 	/**
