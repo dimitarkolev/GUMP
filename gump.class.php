@@ -395,6 +395,49 @@ class GUMP
 	}
 	
 	/**
+	 * Determine if the provided value is valid date with a given format default format is DD-MM-YYYY
+	 * 
+	 * @access protected
+	 * @param  string $field
+	 * @param  array $input
+	 * @return mixed
+	 */
+	protected function validate_date($field, $input, $param = 'DD-MM-YYYY')
+	{
+		if(!isset($input[$field]))
+		{
+			return;
+		}
+
+		if(strlen($date) >= 8 && strlen($date) <= 10){
+	        $separator_only = str_replace(array('M','D','Y'),'', $format);
+	        $separator = $separator_only[0];
+	        if($separator){
+	            $regexp = str_replace($separator, "\\" . $separator, $format);
+	            $regexp = str_replace('MM', '(0[1-9]|1[0-2])', $regexp);
+	            $regexp = str_replace('M', '(0?[1-9]|1[0-2])', $regexp);
+	            $regexp = str_replace('DD', '(0[1-9]|[1-2][0-9]|3[0-1])', $regexp);
+	            $regexp = str_replace('D', '(0?[1-9]|[1-2][0-9]|3[0-1])', $regexp);
+	            $regexp = str_replace('YYYY', '\d{4}', $regexp);
+	            $regexp = str_replace('YY', '\d{2}', $regexp);
+	            if($regexp != $date && preg_match('/'.$regexp.'$/', $date)){
+	                foreach (array_combine(explode($separator,$format), explode($separator,$date)) as $key=>$value) {
+	                    if ($key == 'YY') $year = '20'.$value;
+	                    if ($key == 'YYYY') $year = $value;
+	                    if ($key[0] == 'M') $month = $value;
+	                    if ($key[0] == 'D') $day = $value;
+	                }
+	                if (checkdate($month,$day,$year)) return array(
+						'field' => $field,
+						'value' => $input[$field],
+						'rule'	=> __FUNCTION__
+					);
+	            }
+	        }
+	    }
+	}
+	
+	/**
 	 * Determine if the provided email is valid
 	 * 
 	 * @access protected
